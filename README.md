@@ -1,3 +1,4 @@
+
 # Employee & HR Management Portal
 
 Simple React (Vite) front end + JSON Server back end for a college lab project.
@@ -83,3 +84,4 @@ The `package.json` includes overrides for rollup and esbuild so the project work
   "esbuild": "npm:esbuild-wasm@0.21.5"
 }
 ```
+# HR-PORTAL
