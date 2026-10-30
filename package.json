@@ -4,9 +4,12 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "api": "json-server --watch db.json --port 3001",
+    "api": "json-server --watch db.json --port 3000",
     "dev": "vite",
-    "start": "concurrently \"npm run api\" \"npm run dev\""
+    "build": "vite build",
+    "server": "node server.js",
+    "start": "concurrently \"npm run api\" \"npm run dev\"",
+    "test:api": "node verify-suite.js"
   },
   "dependencies": {
     "react": "^18.3.1",

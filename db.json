@@ -98,18 +98,51 @@
     }
   ],
   "departments": [
-    { "id": 1, "name": "Human Resources" },
-    { "id": 2, "name": "Engineering" },
-    { "id": 3, "name": "Finance" },
-    { "id": 4, "name": "Sales" }
+    {
+      "id": 1,
+      "name": "Human Resources"
+    },
+    {
+      "id": 2,
+      "name": "Engineering"
+    },
+    {
+      "id": 3,
+      "name": "Finance"
+    },
+    {
+      "id": 4,
+      "name": "Sales"
+    }
   ],
   "designations": [
-    { "id": 1, "name": "HR Manager" },
-    { "id": 2, "name": "Senior Developer" },
-    { "id": 3, "name": "Developer" },
-    { "id": 4, "name": "Team Lead" },
-    { "id": 5, "name": "Accountant" },
-    { "id": 6, "name": "Senior Accountant" },
-    { "id": 7, "name": "Sales Executive" }
+    {
+      "id": 1,
+      "name": "HR Manager"
+    },
+    {
+      "id": 2,
+      "name": "Senior Developer"
+    },
+    {
+      "id": 3,
+      "name": "Developer"
+    },
+    {
+      "id": 4,
+      "name": "Team Lead"
+    },
+    {
+      "id": 5,
+      "name": "Accountant"
+    },
+    {
+      "id": 6,
+      "name": "Senior Accountant"
+    },
+    {
+      "id": 7,
+      "name": "Sales Executive"
+    }
   ]
 }

@@ -1,87 +1,89 @@
+# Employee & HR Management Portal (PeopleDesk)
 
-# Employee & HR Management Portal
+Comprehensive React (Vite) frontend + JSON Server backend for the Capstone Project.
 
-Simple React (Vite) front end + JSON Server back end for a college lab project.
+## How to Run
 
-## How to run (Windows Command Prompt)
-
+### Recommended (Concurrently starts API + Frontend)
 ```cmd
-cd path\to\hr-portal
 npm install
 npm start
 ```
 
-- App opens at: http://localhost:5173
-- API runs at: http://localhost:3001
+- **Frontend App:** [http://localhost:5173](http://localhost:5173)
+- **JSON Server API:** [http://localhost:3000](http://localhost:3000)
 
-`npm start` runs both the API and the React app together.
+### Run Services Separately
+1. **JSON Server (Backend):**
+   ```cmd
+   npm run api
+   ```
+2. **Vite Development Server (Frontend):**
+   ```cmd
+   npm run dev
+   ```
 
-To run them separately:
-
+### Run Automated End-to-End API Test Suite
 ```cmd
-npm run api
+npm run test:api
 ```
 
-```cmd
-npm run dev
-```
+---
 
-## Features
+## Capstone Features
 
-- **Dashboard** – total employees, counts by status (Active / On Leave / Resigned), average salary, headcount and average salary by department, recent joiners
-- **Employees** – add, view, edit, delete; search by name or employee code; filter by department, designation and status
-- **Employee details** page
-- **Departments** and **Designations** – add, rename, delete (delete is blocked while employees still use the item)
+- **Dashboard:**
+  - Real-time headcount statistics: Total Workforce, Active Staff, Inactive/On Leave Staff.
+  - Average monthly salary & total monthly payroll sum.
+  - Department-wise employee statistics (headcount, company percentage, and average salary bar chart).
+  - Detailed workforce statistics & recent joiners log.
+- **Employees:**
+  - Full CRUD: Add, View individual profile, Edit, Delete (with accessible modal confirmation).
+  - Search by employee name or code (case-insensitive).
+  - Filter by department, designation, and employment status.
+  - Column sorting (by Code, Name, Department, Designation, Salary, Status).
+  - Client-side pagination with selectable page size (5, 10, 20, 50).
+  - Export filtered employee records to CSV.
+  - Clear filters button and friendly empty states.
+- **Employee Details:**
+  - RESTful `GET /employees/:id` read workflow with loading state and 404 handling.
+- **Employee Form:**
+  - RESTful `GET /employees/:id` update workflow and `POST /employees` create workflow.
+  - Case-insensitive duplicate email validation.
+  - Case-insensitive duplicate employee code validation.
+  - Joining date bounds validation (1970 to future threshold).
+  - Numeric salary validation (> 0, formatted in INR ₹).
+  - Department and designation existence checks.
+- **Departments:**
+  - Add, View, Edit, and Delete departments.
+  - Case-insensitive duplicate department name validation on both Add and Edit.
+  - Deletion blocked when employees are assigned to a department.
+- **Designations:**
+  - Add, View, Edit, and Delete designations.
+  - Case-insensitive duplicate designation title validation on both Add and Edit.
+  - Automatic cascading updates to all employees holding the designation when renamed, with partial failure handling.
+  - Deletion blocked when employees hold the designation.
 
-## Project structure
+---
 
-```
-hr-portal/
-  db.json              – seed data for json-server
-  index.html
-  package.json
-  vite.config.js
-  src/
-    main.jsx
-    App.jsx
-    styles.css         – one shared stylesheet
-    services/
-      api.js           – all fetch calls to the API
-    pages/
-      Dashboard.jsx
-      Employees.jsx
-      EmployeeDetails.jsx
-      EmployeeForm.jsx
-      Departments.jsx
-      Designations.jsx
-```
+## Centralized API Architecture
 
-## API (JSON Server)
+All network operations are managed through `src/services/api.js` pointing to `VITE_API_BASE_URL` defined in `.env` (defaults to `http://localhost:3000`).
 
-| Method | Endpoint              |
-|--------|-----------------------|
-| GET    | /employees            |
-| GET    | /employees/:id        |
-| POST   | /employees            |
-| PUT    | /employees/:id        |
-| DELETE | /employees/:id        |
-| GET    | /departments          |
-| POST   | /departments          |
-| PUT    | /departments/:id      |
-| DELETE | /departments/:id      |
-| GET    | /designations         |
-| POST   | /designations         |
-| PUT    | /designations/:id     |
-| DELETE | /designations/:id     |
-
-## Notes for lab PC
-
-The `package.json` includes overrides for rollup and esbuild so the project works when native binaries are blocked:
-
-```json
-"overrides": {
-  "rollup": "npm:@rollup/wasm-node@4.24.0",
-  "esbuild": "npm:esbuild-wasm@0.21.5"
-}
-```
-# HR-PORTAL
+| Resource | Method | Endpoint | Description |
+| :--- | :--- | :--- | :--- |
+| **Employees** | `GET` | `/employees` | List all employees |
+| | `GET` | `/employees/:id` | Get employee by ID |
+| | `POST` | `/employees` | Create employee |
+| | `PUT` | `/employees/:id` | Update employee |
+| | `DELETE` | `/employees/:id` | Delete employee |
+| **Departments** | `GET` | `/departments` | List all departments |
+| | `GET` | `/departments/:id` | Get department by ID |
+| | `POST` | `/departments` | Create department |
+| | `PUT` | `/departments/:id` | Update department |
+| | `DELETE` | `/departments/:id` | Delete department |
+| **Designations** | `GET` | `/designations` | List all designations |
+| | `GET` | `/designations/:id` | Get designation by ID |
+| | `POST` | `/designations` | Create designation |
+| | `PUT` | `/designations/:id` | Update designation |
+| | `DELETE` | `/designations/:id` | Delete designation |

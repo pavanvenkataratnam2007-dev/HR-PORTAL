@@ -4,23 +4,22 @@ import {
   updateDepartment,
   deleteDepartment,
 } from '../services/api.js';
+import ConfirmModal from '../components/ConfirmModal.jsx';
+import EmptyState from '../components/EmptyState.jsx';
 
-function Departments({ departmentList, employeeList, onRefresh }) {
+function Departments({ departmentList = [], employeeList = [], onRefresh }) {
   const [newName, setNewName] = useState('');
   const [editId, setEditId] = useState(null);
   const [editName, setEditName] = useState('');
   const [msg, setMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
+  // Modal deletion state
+  const [deptToDelete, setDeptToDelete] = useState(null);
+
   // How many employees use this department
   function countUsage(deptId) {
-    let count = 0;
-    for (let i = 0; i < employeeList.length; i++) {
-      if (employeeList[i].departmentId === deptId) {
-        count++;
-      }
-    }
-    return count;
+    return employeeList.filter((emp) => Number(emp.departmentId) === Number(deptId)).length;
   }
 
   async function handleAdd(e) {
@@ -28,29 +27,29 @@ function Departments({ departmentList, employeeList, onRefresh }) {
     const trimmed = newName.trim();
 
     if (!trimmed) {
-      setMsg('Please enter a name first.');
+      setMsg('Please enter a department name.');
       return;
     }
 
     // Check duplicate (case insensitive)
-    for (let i = 0; i < departmentList.length; i++) {
-      if (departmentList[i].name.toLowerCase() === trimmed.toLowerCase()) {
-        setMsg('That department name already exists.');
-        return;
-      }
+    const exists = departmentList.some(
+      (dept) => dept.name.trim().toLowerCase() === trimmed.toLowerCase()
+    );
+
+    if (exists) {
+      setMsg(`A department named "${trimmed}" already exists.`);
+      return;
     }
 
     try {
       await addDepartment({ name: trimmed });
       setNewName('');
       setMsg('');
-      setSuccessMsg('Department added.');
-      onRefresh();
-      setTimeout(function () {
-        setSuccessMsg('');
-      }, 2500);
+      setSuccessMsg(`Department "${trimmed}" added successfully.`);
+      if (onRefresh) onRefresh();
+      setTimeout(() => setSuccessMsg(''), 3000);
     } catch (err) {
-      setMsg('Could not add. Is the API running?');
+      setMsg(err.message || 'Could not add department. Is the API running?');
     }
   }
 
@@ -62,112 +61,142 @@ function Departments({ departmentList, employeeList, onRefresh }) {
 
   async function handleSave(dept) {
     const trimmed = editName.trim();
-    if (!trimmed) return;
+    if (!trimmed) {
+      setMsg('Department name cannot be blank.');
+      return;
+    }
+
+    // Duplicate department check on EDIT (case-insensitive, excluding self)
+    const isDuplicate = departmentList.some(
+      (d) =>
+        Number(d.id) !== Number(dept.id) &&
+        d.name.trim().toLowerCase() === trimmed.toLowerCase()
+    );
+
+    if (isDuplicate) {
+      setMsg(`Another department named "${trimmed}" already exists.`);
+      return;
+    }
 
     try {
       await updateDepartment(dept.id, { ...dept, name: trimmed });
       setEditId(null);
-      setSuccessMsg('Name updated.');
-      onRefresh();
-      setTimeout(function () {
-        setSuccessMsg('');
-      }, 2500);
+      setMsg('');
+      setSuccessMsg(`Department updated to "${trimmed}".`);
+      if (onRefresh) onRefresh();
+      setTimeout(() => setSuccessMsg(''), 3000);
     } catch (err) {
-      setMsg('Could not save changes.');
+      setMsg(err.message || 'Could not save changes to department.');
     }
   }
 
-  async function handleDelete(dept) {
+  function promptDelete(dept) {
     const usedBy = countUsage(dept.id);
     if (usedBy > 0) {
       setMsg(
-        dept.name +
-          ' is used by ' +
-          usedBy +
-          ' employee(s). Reassign them before deleting.'
+        `Cannot delete "${dept.name}". It is currently assigned to ${usedBy} employee(s). Please reassign them first.`
       );
       return;
     }
+    setMsg('');
+    setDeptToDelete(dept);
+  }
 
-    const ok = window.confirm('Delete ' + dept.name + '?');
-    if (!ok) return;
+  async function confirmDeleteDept() {
+    if (!deptToDelete) return;
 
     try {
-      await deleteDepartment(dept.id);
-      setMsg('');
-      setSuccessMsg(dept.name + ' was removed.');
-      onRefresh();
-      setTimeout(function () {
-        setSuccessMsg('');
-      }, 2500);
+      await deleteDepartment(deptToDelete.id);
+      setSuccessMsg(`Department "${deptToDelete.name}" was removed.`);
+      setDeptToDelete(null);
+      if (onRefresh) onRefresh();
+      setTimeout(() => setSuccessMsg(''), 3000);
     } catch (err) {
-      setMsg('Could not delete.');
+      setMsg(err.message || 'Could not delete department.');
+      setDeptToDelete(null);
     }
   }
 
   return (
     <>
-      <h2>Departments</h2>
+      <div className="head">
+        <h2>Departments</h2>
+        <span className="note">Total: {departmentList.length}</span>
+      </div>
 
-      <form className="filters" onSubmit={handleAdd}>
+      <form className="filters panel" onSubmit={handleAdd}>
         <input
-          placeholder="New department name"
+          placeholder="Enter new department name (e.g. Marketing)"
           value={newName}
-          onChange={function (e) {
+          onChange={(e) => {
             setNewName(e.target.value);
+            if (msg) setMsg('');
           }}
         />
-        <button className="primary">Add</button>
+        <button type="submit" className="primary">
+          + Add Department
+        </button>
       </form>
 
-      {msg && <p className="banner">{msg}</p>}
+      {msg && <p className="banner danger">{msg}</p>}
       {successMsg && <p className="banner success">{successMsg}</p>}
 
       <div className="scroll">
         <table>
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Employees</th>
-              <th></th>
+              <th>Department Name</th>
+              <th>Assigned Employees</th>
+              <th style={{ textAlign: 'right' }}>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {departmentList.map(function (dept) {
+            {departmentList.map((dept) => {
+              const usage = countUsage(dept.id);
+              const isEditingThis = editId === dept.id;
+
               return (
                 <tr key={dept.id}>
                   <td>
-                    {editId === dept.id ? (
+                    {isEditingThis ? (
                       <input
                         value={editName}
-                        onChange={function (e) {
-                          setEditName(e.target.value);
-                        }}
+                        onChange={(e) => setEditName(e.target.value)}
                         autoFocus
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleSave(dept);
+                          if (e.key === 'Escape') setEditId(null);
+                        }}
                       />
                     ) : (
-                      dept.name
+                      <b>{dept.name}</b>
                     )}
                   </td>
-                  <td>{countUsage(dept.id)}</td>
+                  <td>
+                    <span className={usage > 0 ? 'badge badge-info' : 'badge badge-muted'}>
+                      {usage} employee{usage === 1 ? '' : 's'}
+                    </span>
+                  </td>
                   <td className="acts">
-                    {editId === dept.id ? (
+                    {isEditingThis ? (
                       <>
-                        <button onClick={function () { handleSave(dept); }}>
+                        <button type="button" className="primary" onClick={() => handleSave(dept)}>
                           Save
                         </button>
-                        <button onClick={function () { setEditId(null); }}>
+                        <button type="button" onClick={() => setEditId(null)}>
                           Cancel
                         </button>
                       </>
                     ) : (
                       <>
-                        <button onClick={function () { startEdit(dept); }}>
+                        <button type="button" onClick={() => startEdit(dept)}>
                           Edit
                         </button>
                         <button
+                          type="button"
                           className="danger"
-                          onClick={function () { handleDelete(dept); }}
+                          onClick={() => promptDelete(dept)}
+                          title={usage > 0 ? 'Cannot delete assigned department' : 'Delete department'}
                         >
                           Delete
                         </button>
@@ -180,13 +209,31 @@ function Departments({ departmentList, employeeList, onRefresh }) {
             {departmentList.length === 0 && (
               <tr>
                 <td colSpan="3" className="empty">
-                  No departments yet. Add one above.
+                  <EmptyState
+                    title="No Departments Created"
+                    description="Get started by creating your organization's first department above."
+                  />
                 </td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
+
+      {/* Accessible Confirmation Modal */}
+      <ConfirmModal
+        isOpen={Boolean(deptToDelete)}
+        title="Delete Department"
+        message={
+          deptToDelete
+            ? `Are you sure you want to permanently delete the "${deptToDelete.name}" department?`
+            : ''
+        }
+        confirmText="Delete Department"
+        isDanger={true}
+        onConfirm={confirmDeleteDept}
+        onCancel={() => setDeptToDelete(null)}
+      />
     </>
   );
 }

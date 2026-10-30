@@ -6,7 +6,12 @@ import EmployeeDetails from './pages/EmployeeDetails.jsx';
 import EmployeeForm from './pages/EmployeeForm.jsx';
 import Departments from './pages/Departments.jsx';
 import Designations from './pages/Designations.jsx';
-import { getEmployees, getDepartments, getDesignations } from './services/api.js';
+import {
+  getEmployees,
+  getDepartments,
+  getDesignations,
+  API_BASE_URL,
+} from './services/api.js';
 
 function App() {
   const [employeeList, setEmployeeList] = useState([]);
@@ -15,7 +20,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
 
-  // Load all data when the app starts
+  // Load all central data when the app mounts or refreshes
   async function loadAllData() {
     try {
       const [emps, depts, desigs] = await Promise.all([
@@ -28,7 +33,10 @@ function App() {
       setDesignationList(desigs);
       setErrorMsg('');
     } catch (err) {
-      setErrorMsg('Cannot reach the API. Start it with "npm run api" (port 3001).');
+      setErrorMsg(
+        err.message ||
+          `Cannot reach JSON Server at ${API_BASE_URL}. Start it with "npm run api".`
+      );
     } finally {
       setLoading(false);
     }
@@ -41,20 +49,47 @@ function App() {
   return (
     <div className="shell">
       <aside className="side">
-        <h1>People<span>Desk</span></h1>
+        <h1>
+          People<span>Desk</span>
+        </h1>
         <nav>
-          <NavLink to="/dashboard">Dashboard</NavLink>
-          <NavLink to="/employees">Employees</NavLink>
-          <NavLink to="/departments">Departments</NavLink>
-          <NavLink to="/designations">Designations</NavLink>
+          <NavLink to="/dashboard">
+            <span>📊</span> Dashboard
+          </NavLink>
+          <NavLink to="/employees">
+            <span>👥</span> Employees
+          </NavLink>
+          <NavLink to="/departments">
+            <span>🏢</span> Departments
+          </NavLink>
+          <NavLink to="/designations">
+            <span>🏷️</span> Designations
+          </NavLink>
         </nav>
       </aside>
 
       <main className="main">
-        {errorMsg && <div className="banner">{errorMsg}</div>}
+        {errorMsg && (
+          <div className="banner danger">
+            <span>⚠</span>
+            <div style={{ flex: 1 }}>{errorMsg}</div>
+            <button
+              type="button"
+              className="primary"
+              onClick={() => {
+                setLoading(true);
+                loadAllData();
+              }}
+            >
+              Retry Connection
+            </button>
+          </div>
+        )}
 
         {loading ? (
-          <p>Loading data…</p>
+          <div className="panel loading-panel">
+            <p>Loading workforce data from JSON Server...</p>
+          </div>
         ) : (
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
@@ -129,7 +164,18 @@ function App() {
                 />
               }
             />
-            <Route path="*" element={<p>Page not found.</p>} />
+            <Route
+              path="*"
+              element={
+                <div className="panel error-panel">
+                  <h3>404 &middot; Page Not Found</h3>
+                  <p>The page you requested does not exist or has been moved.</p>
+                  <NavLink to="/dashboard" className="button primary">
+                    Return to Dashboard
+                  </NavLink>
+                </div>
+              }
+            />
           </Routes>
         )}
       </main>
