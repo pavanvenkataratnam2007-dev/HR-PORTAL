@@ -1,0 +1,26 @@
+{
+  "name": "employee-hr-portal",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "api": "json-server --watch db.json --port 3001",
+    "dev": "vite",
+    "start": "concurrently \"npm run api\" \"npm run dev\""
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "concurrently": "^8.2.2",
+    "json-server": "0.17.4",
+    "vite": "^5.4.0"
+  },
+  "overrides": {
+    "rollup": "npm:@rollup/wasm-node@4.24.0",
+    "esbuild": "npm:esbuild-wasm@0.21.5"
+  }
+}

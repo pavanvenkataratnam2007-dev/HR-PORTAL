@@ -1,0 +1,115 @@
+{
+  "employees": [
+    {
+      "id": 1,
+      "employeeCode": "EMP001",
+      "name": "Anitha Reddy",
+      "email": "anitha.reddy@company.com",
+      "phone": "9876501001",
+      "departmentId": 1,
+      "designation": "HR Manager",
+      "joiningDate": "2019-06-10",
+      "salary": 85000,
+      "status": "Active"
+    },
+    {
+      "id": 2,
+      "employeeCode": "EMP002",
+      "name": "Ravi Kumar",
+      "email": "ravi.kumar@company.com",
+      "phone": "9876501002",
+      "departmentId": 2,
+      "designation": "Senior Developer",
+      "joiningDate": "2020-02-17",
+      "salary": 120000,
+      "status": "Active"
+    },
+    {
+      "id": 3,
+      "employeeCode": "EMP003",
+      "name": "Sneha Patel",
+      "email": "sneha.patel@company.com",
+      "phone": "9876501003",
+      "departmentId": 2,
+      "designation": "Developer",
+      "joiningDate": "2022-08-01",
+      "salary": 70000,
+      "status": "Active"
+    },
+    {
+      "id": 4,
+      "employeeCode": "EMP004",
+      "name": "Karthik Rao",
+      "email": "karthik.rao@company.com",
+      "phone": "9876501004",
+      "departmentId": 3,
+      "designation": "Accountant",
+      "joiningDate": "2021-01-25",
+      "salary": 55000,
+      "status": "On Leave"
+    },
+    {
+      "id": 5,
+      "employeeCode": "EMP005",
+      "name": "Meera Nair",
+      "email": "meera.nair@company.com",
+      "phone": "9876501005",
+      "departmentId": 4,
+      "designation": "Sales Executive",
+      "joiningDate": "2023-03-13",
+      "salary": 48000,
+      "status": "Active"
+    },
+    {
+      "id": 6,
+      "employeeCode": "EMP006",
+      "name": "Arjun Singh",
+      "email": "arjun.singh@company.com",
+      "phone": "9876501006",
+      "departmentId": 4,
+      "designation": "Team Lead",
+      "joiningDate": "2018-11-05",
+      "salary": 95000,
+      "status": "Resigned"
+    },
+    {
+      "id": 7,
+      "employeeCode": "EMP007",
+      "name": "Divya Sharma",
+      "email": "divya.sharma@company.com",
+      "phone": "9876501007",
+      "departmentId": 2,
+      "designation": "Team Lead",
+      "joiningDate": "2019-09-30",
+      "salary": 110000,
+      "status": "Active"
+    },
+    {
+      "id": 8,
+      "employeeCode": "EMP008",
+      "name": "Suresh Babu",
+      "email": "suresh.babu@company.com",
+      "phone": "9876501008",
+      "departmentId": 3,
+      "designation": "Senior Accountant",
+      "joiningDate": "2017-04-19",
+      "salary": 78000,
+      "status": "Active"
+    }
+  ],
+  "departments": [
+    { "id": 1, "name": "Human Resources" },
+    { "id": 2, "name": "Engineering" },
+    { "id": 3, "name": "Finance" },
+    { "id": 4, "name": "Sales" }
+  ],
+  "designations": [
+    { "id": 1, "name": "HR Manager" },
+    { "id": 2, "name": "Senior Developer" },
+    { "id": 3, "name": "Developer" },
+    { "id": 4, "name": "Team Lead" },
+    { "id": 5, "name": "Accountant" },
+    { "id": 6, "name": "Senior Accountant" },
+    { "id": 7, "name": "Sales Executive" }
+  ]
+}
